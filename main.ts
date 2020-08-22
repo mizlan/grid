@@ -170,7 +170,7 @@ class App {
 	}
 
 	gridPoly(points: Point[], color: string): void {
-		if (points.length == 0)
+		if (points.length === 0)
 			return;
 		this.ctx.fillStyle = hexToRGB(color, '0.5');
 		this.ctx.strokeStyle = color;
@@ -225,15 +225,15 @@ class App {
 	}
 
 	isValidRect(arr: number[]): boolean {
-		return this.isValid(arr) && (arr.length == 4 || arr.length == 8);
+		return this.isValid(arr) && (arr.length === 4 || arr.length === 8);
 	}
 
 	isValidCirc(arr: number[]): boolean {
-		return this.isValid(arr) && arr.length == 3;
+		return this.isValid(arr) && arr.length === 3;
 	}
 
 	isValidPoly(arr: number[]): boolean {
-		return this.isValid(arr) && arr.length % 2 == 0;
+		return this.isValid(arr) && arr.length % 2 === 0;
 	}
 
 	updateAll(): void {
@@ -274,6 +274,13 @@ const addShapeButton = document.getElementById('add');
 const shapeList = document.getElementById('shapes') as HTMLUListElement;
 const shapes = ['rectangle', 'circle', 'square', 'point', 'polygon'];
 
+shapeList.addEventListener('input', (event) => {
+	let target = (event.target as Element);
+	if (target.tagName === 'TEXTAREA') {
+		app.updateAll();
+	}
+});
+
 // add new shapes
 addShapeButton.addEventListener('click', () => {
 	let li = document.createElement('li');
@@ -287,9 +294,6 @@ addShapeButton.addEventListener('click', () => {
 		option.append(document.createTextNode(shape));
 		se.append(option);
 	}
-	tx.addEventListener('input', () => {
-		app.updateAll();
-	});
 });
 
 window.addEventListener('resize', () => {
