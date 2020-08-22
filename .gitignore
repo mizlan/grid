@@ -2,3 +2,4 @@ tsconfig.json
 main.js
 dist/
 node_modules/
+.cache/
