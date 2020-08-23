@@ -66,7 +66,19 @@ class App {
 		});
 	}
 
-	resize(): void {
+	changeStepSize(newSize: number) {
+		this.stepSize = newSize;
+		this.resize(false);
+		this.drawBasis();
+		this.updateAll();
+	}
+	changeStepRange(newRange: number) {
+		this.stepRange = newRange;
+		this.resize(false);
+		this.drawBasis();
+		this.updateAll();
+	}
+	resize(resetOrigin = true): void {
 		let w = window.getComputedStyle(this.canvas, null).getPropertyValue("width");
 		let h = window.getComputedStyle(this.canvas, null).getPropertyValue("height")
 		// add 8 pixels to height, for some reason
@@ -74,7 +86,8 @@ class App {
 		this.canvas.setAttribute('height', h);
 		console.log(w, h);
 
-		this.origin = new Point(this.canvas.width/2, this.canvas.height/2);
+		if (resetOrigin)
+			this.origin = new Point(this.canvas.width/2, this.canvas.height/2);
 
 		// for some reason, these values are reset inside this function, so set them back
 		this.ctx.lineCap = 'round';
@@ -318,6 +331,29 @@ window.addEventListener('resize', () => {
 	app.resize();
 	app.drawBasis();
 	app.updateAll();
+});
+
+const sizeInput = document.getElementById('size') as HTMLInputElement;
+sizeInput.addEventListener('input', () => {
+	if (sizeInput.value === '') {
+		app.changeStepSize(50);
+	}
+	let p = +sizeInput.value;
+	if (!Number.isNaN(p)) {
+		if (p > 20)
+			app.changeStepSize(p);
+	}
+});
+const rangeInput = document.getElementById('range') as HTMLInputElement;
+rangeInput.addEventListener('input', () => {
+	if (rangeInput.value === '') {
+		app.changeStepRange(1);
+	}
+	let p = +rangeInput.value;
+	if (!Number.isNaN(p)) {
+		if (p > 0)
+			app.changeStepRange(p);
+	}
 });
 
 // vim: set fdm=syntax fdl=10: (fold subsections)

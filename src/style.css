@@ -2,7 +2,7 @@ html {
 	overflow-x: hidden;
 	overflow-y: hidden;
 }
-select, textarea, option, button {
+input, select, textarea, option, button {
 	font-family: 'Roboto Mono', monospace;
 	font-size: 30px;
 }
@@ -58,7 +58,7 @@ select {
 	color: #d4d5d6;
 	outline: none;
 }
-textarea {
+input, textarea {
 	background-color: #393b40;
 	color: white;
 	padding: 20px;
@@ -73,16 +73,18 @@ textarea {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
-
+}
+input {
+	padding: 10px;
+	font-size: 20px;
+	margin: 20px 0px 0px 0px;
 }
 ::-moz-selection { /* Code for Firefox */
-  /* background: #9bbdac; */
 	background: white;
 	color: white;
 }
 
 ::selection {
-	/* background: #9bbdac; */
 	background: white;
 	color: white;
 }
