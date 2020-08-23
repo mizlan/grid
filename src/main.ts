@@ -283,10 +283,13 @@ shapeList.addEventListener('input', (event) => {
 // add new shapes
 addShapeButton.addEventListener('click', () => {
 	let li = document.createElement('li');
+	let di = document.createElement('div');
 	let tx = document.createElement('textarea');
+	di.append(tx);
+	di.style.width = '100%';
 	let se = document.createElement('select');
 	li.append(se);
-	li.append(tx);
+	li.append(di);
 	shapeList.append(li);
 	for (let shape of shapes) {
 		let option = document.createElement('option');
@@ -301,4 +304,4 @@ window.addEventListener('resize', () => {
 	app.updateAll();
 });
 
-// vim: set fdm=syntax fdl=0: (fold subsections)
+// vim: set fdm=syntax fdl=10: (fold subsections)
