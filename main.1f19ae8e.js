@@ -479,10 +479,13 @@ shapeList.addEventListener('input', function (event) {
 
 addShapeButton.addEventListener('click', function () {
   var li = document.createElement('li');
+  var di = document.createElement('div');
   var tx = document.createElement('textarea');
+  di.append(tx);
+  di.style.width = '100%';
   var se = document.createElement('select');
   li.append(se);
-  li.append(tx);
+  li.append(di);
   shapeList.append(li);
 
   var _iterator3 = _createForOfIteratorHelper(shapes),
@@ -505,7 +508,7 @@ window.addEventListener('resize', function () {
   app.resize();
   app.drawBasis();
   app.updateAll();
-}); // vim: set fdm=syntax fdl=0: (fold subsections)
+}); // vim: set fdm=syntax fdl=10: (fold subsections)
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -534,7 +537,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49459" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50037" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
