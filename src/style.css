@@ -73,6 +73,18 @@ textarea {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
+
+}
+::-moz-selection { /* Code for Firefox */
+  /* background: #9bbdac; */
+	background: white;
+	color: white;
+}
+
+::selection {
+	/* background: #9bbdac; */
+	background: white;
+	color: white;
 }
 button {
 	border: none;
