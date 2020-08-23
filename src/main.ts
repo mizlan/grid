@@ -2,14 +2,6 @@ class Point {
 	constructor(public x: number, public y: number) {}
 }
 
-class Polygon {
-	constructor(public points: Point[]) {}
-}
-
-class Circle {
-	constructor(public radius: number, public center: Point) {}
-}
-
 function hexToRGB(hex: string, alpha: string) {
 	const r = parseInt(hex.slice(1, 3), 16);
 	const g = parseInt(hex.slice(3, 5), 16);
@@ -31,8 +23,7 @@ class App {
 	private stepSize: number;
 	// distance one step corresponds with
 	private stepRange: number;
-	private colors = ['#9c7979', '#9c9279', '#799c7d', '#798c9c', '#93799c']
-	/* private allShapes: Map<number, Polygon|Circle>; */
+	private colors = ['#9c7979', '#9c9279', '#799c7d', '#799c97', '#798c9c', '#798c9c', '#93799c', '#9c798f']
 	private lastMousePos = {x: 0, y: 0};
 	private mouseIsDown = false;
 
@@ -94,43 +85,39 @@ class App {
 		this.origin.y += deltaY;
 	}
 
+	drawXGuideline(position: number) {
+		this.ctx.lineWidth = 2;
+		this.ctx.strokeStyle = '#eeeeee';
+		this.ctx.beginPath();
+		this.ctx.moveTo(position, 0);
+		this.ctx.lineTo(position, this.canvas.height);
+		this.ctx.stroke();
+		this.ctx.closePath();
+	}
+
+	drawYGuideline(position: number) {
+		this.ctx.lineWidth = 2;
+		this.ctx.strokeStyle = '#eeeeee';
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, position);
+		this.ctx.lineTo(this.canvas.width, position);
+		this.ctx.stroke();
+		this.ctx.closePath();
+	}
+
 	drawBasis(): void {
 		// tick marks
-		for (let position = this.origin.x + this.stepSize; position < this.canvas.width; position += this.stepSize) {
-			this.ctx.lineWidth = 2;
-			this.ctx.strokeStyle = '#eeeeee';
-			this.ctx.beginPath();
-			this.ctx.moveTo(position, 0);
-			this.ctx.lineTo(position, this.canvas.height);
-			this.ctx.stroke();
-			this.ctx.closePath();
+		for (let pos = this.origin.x + this.stepSize; pos < this.canvas.width; pos += this.stepSize) {
+			this.drawXGuideline(pos);
 		}
-		for (let position = this.origin.x - this.stepSize; position > 0; position -= this.stepSize) {
-			this.ctx.lineWidth = 2;
-			this.ctx.strokeStyle = '#eeeeee';
-			this.ctx.beginPath();
-			this.ctx.moveTo(position, 0);
-			this.ctx.lineTo(position, this.canvas.height);
-			this.ctx.stroke();
-			this.ctx.closePath();
+		for (let pos = this.origin.x - this.stepSize; pos > 0; pos -= this.stepSize) {
+			this.drawXGuideline(pos);
 		}
-		for (let position = this.origin.y + this.stepSize; position < this.canvas.height; position += this.stepSize) {
-			this.ctx.lineWidth = 2;
-			this.ctx.strokeStyle = '#eeeeee';
-			this.ctx.beginPath();
-			this.ctx.moveTo(0, position);
-			this.ctx.lineTo(this.canvas.width, position);
-			this.ctx.stroke();
-			this.ctx.closePath();
+		for (let pos = this.origin.y + this.stepSize; pos < this.canvas.height; pos += this.stepSize) {
+			this.drawYGuideline(pos);
 		}
-		for (let position = this.origin.y - this.stepSize; position > 0; position -= this.stepSize) {
-			this.ctx.lineWidth = 2;
-			this.ctx.strokeStyle = '#eeeeee';
-			this.ctx.beginPath();
-			this.ctx.moveTo(0, position);
-			this.ctx.lineTo(this.canvas.width, position);
-			this.ctx.stroke();
-			this.ctx.closePath();
+		for (let pos = this.origin.y - this.stepSize; pos > 0; pos -= this.stepSize) {
+			this.drawYGuideline(pos);
 		}
 		this.ctx.lineWidth = 2;
 		this.ctx.fillStyle = '#c9c9c9';
@@ -271,11 +258,18 @@ let app = new App();
 
 const addShapeButton = document.getElementById('add');
 const shapeList = document.getElementById('shapes') as HTMLUListElement;
-const shapes = ['rectangle', 'circle', 'square', 'point', 'polygon'];
+const shapes = ['rectangle', 'circle', 'polygon'];
 
 shapeList.addEventListener('input', (event) => {
 	let target = (event.target as Element);
 	if (target.tagName === 'TEXTAREA') {
+		app.updateAll();
+	}
+});
+
+shapeList.addEventListener('change', (event) => {
+	let target = (event.target as Element);
+	if (target.tagName === 'SELECT') {
 		app.updateAll();
 	}
 });
