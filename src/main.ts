@@ -67,8 +67,13 @@ class App {
 	}
 
 	resize(): void {
-		this.canvas.setAttribute('width', window.getComputedStyle(this.canvas, null).getPropertyValue("width"));
-		this.canvas.setAttribute('height', window.getComputedStyle(this.canvas, null).getPropertyValue("height"));
+		let w = window.getComputedStyle(this.canvas, null).getPropertyValue("width");
+		let h = window.getComputedStyle(this.canvas, null).getPropertyValue("height")
+		// add 8 pixels to height, for some reason
+		this.canvas.setAttribute('width', w);
+		this.canvas.setAttribute('height', h);
+		console.log(w, h);
+		
 		this.origin = new Point(this.canvas.width/2, this.canvas.height/2);
 
 		// for some reason, these values are reset inside this function, so set them back
@@ -281,6 +286,7 @@ addShapeButton.addEventListener('click', () => {
 	let tx = document.createElement('textarea');
 	di.append(tx);
 	di.style.width = '100%';
+	di.classList.add('w-wrap');
 	let se = document.createElement('select');
 	li.append(se);
 	li.append(di);
