@@ -68,13 +68,11 @@ class App {
 
 	changeStepSize(newSize: number) {
 		this.stepSize = newSize;
-		this.resize(false);
 		this.drawBasis();
 		this.updateAll();
 	}
 	changeStepRange(newRange: number) {
 		this.stepRange = newRange;
-		this.resize(false);
 		this.drawBasis();
 		this.updateAll();
 	}
