@@ -21,6 +21,10 @@ grid uses whitespace-separated numbers as values. Simply type out or copy paste
 the desired input data and grid will hot reload all edits. grid will not display
 shapes with invalid data, including NaN's or incorrect parameter length.
 
+By default, you can put multiple shapes by separating them with newlines. If instead
+you would like newlines to be treated as normal separators (thus supporting only
+one shape per line), then change "s" (single) to "m" (multi-line).
+
 ### change grid settings
 
 grid provides two modifiable settings: step size and step range, where one "step"
