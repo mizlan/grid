@@ -9,11 +9,11 @@ A simple way to visualize geometric objects on a 2D coordinate plane.
 
 ### create a new shape
 
-To create a new shape, click "add" and then choose the desired shape from the
-drop down list. Polygon can be used to implement most shapes, such as lines,
-triangles, squares, rectangles, and so on. Rectangle uses 4 values: two for
-the x-coordinates and two for the y-coordinates. Circle takes in a radius and
-the center as two coordinates.
+To create a new shape, click "add" (or type the letter "a") and then choose the
+desired shape from the drop down list. Polygon can be used to implement most
+shapes, such as lines, triangles, squares, rectangles, and so on. Rectangle
+uses 4 values: two for the x-coordinates and two for the y-coordinates. Circle
+takes in a radius and the center as two coordinates.
 
 ### define coordinates
 
