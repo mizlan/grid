@@ -255,32 +255,43 @@ class App {
 		this.drawBasis();
 		const shapeList = document.getElementById('shapes') as HTMLUListElement;
 		shapeList.childNodes.forEach((value, position) => {
-			let shapeType = (value as Element).getElementsByTagName('select')[0].value;
-			let numbers = (value as Element).getElementsByTagName('textarea')[0].value.trim().split(/[\n ]+/).map(x => +x);
+			let options = (value as Element).getElementsByTagName('select');
+			let shapeType = options[0].value;
+			let isMultiLine = options[1].value === 'm';
+			let input = (value as Element).getElementsByTagName('textarea')[0].value.trim();
+			let shapes: number[][] = [];
+			if (isMultiLine) {
+				let numbers = input.split(/[\n ]+/).map(x => +x);
+				shapes = [numbers];
+			} else {
+				shapes = input.split(/\n+/).map(line => line.split(/ +/).map(x => +x));
+			}
 			let color = this.colors[position % this.colors.length];
-			switch (shapeType) {
-				case 'rectangle':
-					if (this.isValidRect(numbers)) {
-						this.addRect(position, numbers[0], numbers[1], numbers[2], numbers[3], color);
-					}
-					break;
-				case 'circle':
-					if (this.isValidCirc(numbers)) {
-						this.addCirc(position, numbers[0], new Point(numbers[1], numbers[2]), color);
-					}
-					break;
-				case 'polygon xyxy':
-					if (this.isValidPoly(numbers)) {
-						this.addPoly(position, numbers, color, 'xyxy');
-					}
-					break;
-				case 'polygon xxyy':
-					if (this.isValidPoly(numbers)) {
-						this.addPoly(position, numbers, color, 'xxyy');
-					}
-					break;
-				default:
-					break;
+			for (let numbers of shapes) {
+				switch (shapeType) {
+					case 'rectangle':
+						if (this.isValidRect(numbers)) {
+							this.addRect(position, numbers[0], numbers[1], numbers[2], numbers[3], color);
+						}
+						break;
+					case 'circle':
+						if (this.isValidCirc(numbers)) {
+							this.addCirc(position, numbers[0], new Point(numbers[1], numbers[2]), color);
+						}
+						break;
+					case 'poly xyxy':
+						if (this.isValidPoly(numbers)) {
+							this.addPoly(position, numbers, color, 'xyxy');
+						}
+						break;
+					case 'poly xxyy':
+						if (this.isValidPoly(numbers)) {
+							this.addPoly(position, numbers, color, 'xxyy');
+						}
+						break;
+					default:
+						break;
+				}
 			}
 		});
 	}
@@ -290,7 +301,7 @@ let app = new App();
 
 const addShapeButton = document.getElementById('add');
 const shapeList = document.getElementById('shapes') as HTMLUListElement;
-const shapes = ['rectangle', 'circle', 'polygon xyxy', 'polygon xxyy'];
+const shapes = ['rectangle', 'circle', 'poly xyxy', 'poly xxyy'];
 
 shapeList.addEventListener('input', (event) => {
 	let target = (event.target as Element);
@@ -308,20 +319,31 @@ shapeList.addEventListener('change', (event) => {
 
 // add new shapes
 addShapeButton.addEventListener('click', () => {
+	// add new list element
 	let li = document.createElement('li');
+	// add area for text
 	let di = document.createElement('div');
 	let tx = document.createElement('textarea');
 	di.append(tx);
 	di.style.width = '100%';
 	di.classList.add('w-wrap');
+	// add selection for shape type 
 	let se = document.createElement('select');
+	// add selection for single or multi
+	let sm = document.createElement('select');
 	li.append(se);
+	li.append(sm);
 	li.append(di);
 	shapeList.append(li);
 	for (let shape of shapes) {
 		let option = document.createElement('option');
 		option.append(document.createTextNode(shape));
 		se.append(option);
+	}
+	for (let t of ['s', 'm']) {
+		let option = document.createElement('option');
+		option.append(document.createTextNode(t));
+		sm.append(option);
 	}
 });
 
