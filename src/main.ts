@@ -23,7 +23,7 @@ class App {
 	private stepSize: number;
 	// distance one step corresponds with
 	private stepRange: number;
-	private colors = ['#9c7979', '#9c9279', '#799c7d', '#799c97', '#798c9c', '#798c9c', '#93799c', '#9c798f']
+	private colors = ['#9c7979', '#9c9279', '#799c7d', '#799c97', '#798c9c', '#93799c', '#9c798f']
 	private lastMousePos = {x: 0, y: 0};
 	private mouseIsDown = false;
 
