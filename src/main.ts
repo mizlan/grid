@@ -82,7 +82,6 @@ class App {
 		// add 8 pixels to height, for some reason
 		this.canvas.setAttribute('width', w);
 		this.canvas.setAttribute('height', h);
-		console.log(w, h);
 
 		if (resetOrigin)
 			this.origin = new Point(this.canvas.width/2, this.canvas.height/2);
@@ -188,7 +187,7 @@ class App {
 		this.ctx.fill();
 	}
 
-	addRect(section_id: number, left: number, right: number, top: number, bottom: number, color: string): void {
+	addRect(left: number, right: number, top: number, bottom: number, color: string): void {
 		let points: Point[] = [];
 		points.push(new Point(left, top));
 		points.push(new Point(left, bottom));
@@ -197,8 +196,7 @@ class App {
 		this.gridPoly(points, color);
 	}
 
-	addCirc(section_id: number, radius: number, center: Point, color: string) {
-		/* console.log('in here'); */
+	addCirc(radius: number, center: Point, color: string) {
 		this.ctx.strokeStyle = color;
 		this.ctx.fillStyle = hexToRGB(color, '0.5');
 		this.ctx.lineWidth = 5;
@@ -210,7 +208,7 @@ class App {
 		this.ctx.closePath();
 	}
 
-	addPoly(section_id: number, pts: number[], color: string, coordStyle: "xyxy" | "xxyy") {
+	addPoly(pts: number[], color: string, coordStyle: "xyxy" | "xxyy") {
 		let points: Point[] = [];
 		switch (coordStyle) {
 			case "xyxy":
@@ -255,10 +253,10 @@ class App {
 		this.drawBasis();
 		const shapeList = document.getElementById('shapes') as HTMLUListElement;
 		shapeList.childNodes.forEach((value, position) => {
-			let options = (value as Element).getElementsByTagName('select');
+			let options = (value as HTMLElement).getElementsByTagName('select');
 			let shapeType = options[0].value;
 			let isMultiLine = options[1].value === 'm';
-			let input = (value as Element).getElementsByTagName('textarea')[0].value.trim();
+			let input = (value as HTMLElement).getElementsByTagName('textarea')[0].value.trim();
 			let shapes: number[][] = [];
 			if (isMultiLine) {
 				let numbers = input.split(/[\n ]+/).map(x => +x);
@@ -271,22 +269,22 @@ class App {
 				switch (shapeType) {
 					case 'rectangle':
 						if (this.isValidRect(numbers)) {
-							this.addRect(position, numbers[0], numbers[1], numbers[2], numbers[3], color);
+							this.addRect(numbers[0], numbers[1], numbers[2], numbers[3], color);
 						}
 						break;
 					case 'circle':
 						if (this.isValidCirc(numbers)) {
-							this.addCirc(position, numbers[0], new Point(numbers[1], numbers[2]), color);
+							this.addCirc(numbers[0], new Point(numbers[1], numbers[2]), color);
 						}
 						break;
 					case 'poly xyxy':
 						if (this.isValidPoly(numbers)) {
-							this.addPoly(position, numbers, color, 'xyxy');
+							this.addPoly(numbers, color, 'xyxy');
 						}
 						break;
 					case 'poly xxyy':
 						if (this.isValidPoly(numbers)) {
-							this.addPoly(position, numbers, color, 'xxyy');
+							this.addPoly(numbers, color, 'xxyy');
 						}
 						break;
 					default:
@@ -302,23 +300,54 @@ let app = new App();
 const addShapeButton = document.getElementById('add');
 const shapeList = document.getElementById('shapes') as HTMLUListElement;
 const shapes = ['rectangle', 'circle', 'poly xyxy', 'poly xxyy'];
+const keyIsDown = new Map<string, boolean>();
 
 shapeList.addEventListener('input', (event) => {
-	let target = (event.target as Element);
+	let target = (event.target as HTMLElement);
 	if (target.tagName === 'TEXTAREA') {
 		app.updateAll();
 	}
 });
 
 shapeList.addEventListener('change', (event) => {
-	let target = (event.target as Element);
+	let target = (event.target as HTMLElement);
 	if (target.tagName === 'SELECT') {
 		app.updateAll();
 	}
 });
 
-// add new shapes
-addShapeButton.addEventListener('click', () => {
+function triggerKeyEffects(key: string, target: HTMLElement) {
+	switch (key) {
+		case 'a':
+			addNewShape();
+			shapeList.lastElementChild.getElementsByTagName('textarea')[0].focus();
+			break;
+		default:
+			break;
+	};
+}
+
+window.addEventListener('keydown', (event) => {
+	let ignore = ['SELECT', 'TEXTAREA'];
+	let target = (event.target as HTMLElement);
+	// use escape to blur
+	if (event.key === 'Escape') {
+		target.blur();
+		return;
+	}
+	if (!ignore.includes(target.tagName)) {
+		keyIsDown[event.key] = true;
+	}
+});
+
+window.addEventListener('keyup', (event) => {
+	let key = event.key;
+	if (keyIsDown[key])
+		triggerKeyEffects(key, event.target as HTMLElement);
+	keyIsDown[key] = false;
+});
+
+function addNewShape() {
 	// add new list element
 	let li = document.createElement('li');
 	// add area for text
@@ -345,6 +374,11 @@ addShapeButton.addEventListener('click', () => {
 		option.append(document.createTextNode(t));
 		sm.append(option);
 	}
+}
+
+// add new shapes
+addShapeButton.addEventListener('click', () => {
+	addNewShape();
 });
 
 window.addEventListener('resize', () => {
