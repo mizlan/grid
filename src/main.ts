@@ -134,7 +134,7 @@ class App {
 	}
 
 	/**
-	 * Move the origin 
+	 * Move the origin
 	 * @remarks
 	 * this method does NOT redraw basis, nor change height.
 	 */
@@ -394,7 +394,7 @@ shapeList.addEventListener('change', (event) => {
 	}
 });
 
-let triggerKeyEffects = (key: string, target: HTMLElement) => {
+let triggerKeyEffects = (key: string) => {
 	switch (key) {
 		case 'a':
 			addNewShape();
@@ -421,7 +421,7 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
 	let key = event.key;
 	if (keyIsDown[key])
-		triggerKeyEffects(key, event.target as HTMLElement);
+		triggerKeyEffects(key);
 	keyIsDown[key] = false;
 });
 
@@ -434,7 +434,7 @@ let addNewShape = () => {
 	di.append(tx);
 	di.style.width = '100%';
 	di.classList.add('w-wrap');
-	// add selection for shape type 
+	// add selection for shape type
 	let se = document.createElement('select');
 	// add selection for single or multi
 	let sm = document.createElement('select');
