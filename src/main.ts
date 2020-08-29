@@ -1,8 +1,14 @@
+/* import {hexToRGB} from 'util' */
+
 class Point {
 	constructor(public x: number, public y: number) {}
 }
 
-function hexToRGB(hex: string, alpha: string) {
+/**
+ * Add an alpha value to any hex code.
+ * @returns an rgba string
+ */
+let hexToRGB = (hex: string, alpha: string): string => {
 	const r = parseInt(hex.slice(1, 3), 16);
 	const g = parseInt(hex.slice(3, 5), 16);
 	const b = parseInt(hex.slice(5, 7), 16);
@@ -15,43 +21,58 @@ function hexToRGB(hex: string, alpha: string) {
 }
 
 class App {
+	/** canvas DOM object */
 	private canvas: HTMLCanvasElement;
+	/** canvas 2d context */
 	private ctx: CanvasRenderingContext2D;
 
+	/** the origin of the grid */
 	private origin: Point;
-	// the number of pixels per one step
+	/** the number of pixels per one step */
 	private stepSize: number;
-	// distance one step corresponds with
+	/** distance one step corresponds with */
 	private stepRange: number;
+	/** list of colors to use */
 	private colors = ['#9c7979', '#9c9279', '#799c7d', '#799c97', '#798c9c', '#93799c', '#9c798f']
+	/** data used to detect when the grid is dragged */
 	private lastMousePos = {x: 0, y: 0};
+	/** is the mouse down on the grid */
 	private mouseIsDown = false;
 
 	constructor() {
-		let canvas = document.getElementById('canv') as HTMLCanvasElement;
-		let ctx = canvas.getContext('2d');
+		// initialize canvas
+		this.canvas = document.getElementById('canv') as HTMLCanvasElement;
+		this.ctx = this.canvas.getContext('2d');
 		this.origin = new Point(0, 0);
-		this.ctx = ctx;
-		this.canvas = canvas;
 
+		// add mouse listeners to detect drag
 		this.addMouseListeners();
 
+		// set default step size
 		this.stepSize = 50;
 		this.stepRange = 1;
 
+		// initialize width/height and draw the grid basis
 		this.resize();
 		this.drawBasis();
 	}
 
+	/**
+	 * add mouselisteners to detect when the mouse is pressed down on the grid
+	 */
 	addMouseListeners() {
+		// check when mouse is pressed down, and locate position
 		this.canvas.addEventListener('mousedown', (event) => {
 			this.mouseIsDown = true;
 			this.lastMousePos.x = event.x;
 			this.lastMousePos.y = event.y;
 		});
+		// detect mouseup
 		this.canvas.addEventListener('mouseup', () => {
 			this.mouseIsDown = false;
 		});
+		// when mouse moves, calculate distance between old and new positions,
+		// and use that to shift the grid
 		this.canvas.addEventListener('mousemove', (event) => {
 			if (!this.mouseIsDown) return;
 			if (this.lastMousePos.x !== undefined && this.lastMousePos.y !== undefined) {
@@ -61,25 +82,39 @@ class App {
 				this.drawBasis();
 				this.updateAll();
 			}
+			// update mouse position
 			this.lastMousePos.x = event.x;
 			this.lastMousePos.y = event.y;
 		});
 	}
 
+	/**
+	 * Change step size and redraw the grid basis and shapes
+	 */
 	changeStepSize(newSize: number) {
 		this.stepSize = newSize;
 		this.drawBasis();
 		this.updateAll();
 	}
+
+	/**
+	 * Change step range and redraw the grid basis and shapes
+	 */
 	changeStepRange(newRange: number) {
 		this.stepRange = newRange;
 		this.drawBasis();
 		this.updateAll();
 	}
+
+	/**
+	 * Update the canvas visible width and height
+	 * @param resetOrigin - re-center the origin.
+	 */
 	resize(resetOrigin = true): void {
 		let w = window.getComputedStyle(this.canvas, null).getPropertyValue("width");
 		let h = window.getComputedStyle(this.canvas, null).getPropertyValue("height")
-		// add 8 pixels to height, for some reason
+		// may need add 8 pixels to height, for some reason. however am using
+		// overflow-y: hidden, which disables scroll and excess
 		this.canvas.setAttribute('width', w);
 		this.canvas.setAttribute('height', h);
 
@@ -91,15 +126,26 @@ class App {
 		this.ctx.lineJoin = 'round';
 	}
 
+	/**
+	 * Clears grid
+	 */
 	clearGrid() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
+	/**
+	 * Move the origin 
+	 * @remarks
+	 * this method does NOT redraw basis, nor change height.
+	 */
 	shiftOrigin(deltaX: number, deltaY: number) {
 		this.origin.x += deltaX;
 		this.origin.y += deltaY;
 	}
 
+	/**
+	 * Draw an x guideline given an x-coordinate
+	 */
 	drawXGuideline(position: number) {
 		this.ctx.lineWidth = 2;
 		this.ctx.strokeStyle = '#eeeeee';
@@ -110,6 +156,9 @@ class App {
 		this.ctx.closePath();
 	}
 
+	/**
+	 * Draw an y guideline given an y-coordinate
+	 */
 	drawYGuideline(position: number) {
 		this.ctx.lineWidth = 2;
 		this.ctx.strokeStyle = '#eeeeee';
@@ -120,6 +169,9 @@ class App {
 		this.ctx.closePath();
 	}
 
+	/**
+	 * Draw all tick marks, origin, and main axes
+	 */
 	drawBasis(): void {
 		// tick marks
 		for (let pos = this.origin.x + this.stepSize; pos < this.canvas.width; pos += this.stepSize) {
@@ -161,7 +213,7 @@ class App {
 	}
 
 	/**
-	 * locate the actual coordinates of a point on the canvas, given a grid point
+	 * Locate the actual coordinates of a point on the canvas, given a grid point
 	 **/
 	canvLocate(point: Point): Point {
 		return new Point(
@@ -170,6 +222,9 @@ class App {
 		);
 	}
 
+	/**
+	 * Fill in a polygon onto the grid given an array of vertices
+	 */
 	gridPoly(points: Point[], color: string): void {
 		if (points.length === 0)
 			return;
@@ -187,6 +242,13 @@ class App {
 		this.ctx.fill();
 	}
 
+	/**
+	 * Add a rectangle
+	 * @param left - the left x coordinate
+	 * @param right - the right x coordinate
+	 * @param top - the top y coordinate
+	 * @param bottom - the bottom y coordinate
+	 */
 	addRect(left: number, right: number, top: number, bottom: number, color: string): void {
 		let points: Point[] = [];
 		points.push(new Point(left, top));
@@ -196,6 +258,9 @@ class App {
 		this.gridPoly(points, color);
 	}
 
+	/**
+	 * Add a circle
+	 */
 	addCirc(radius: number, center: Point, color: string) {
 		this.ctx.strokeStyle = color;
 		this.ctx.fillStyle = hexToRGB(color, '0.5');
@@ -208,6 +273,10 @@ class App {
 		this.ctx.closePath();
 	}
 
+	/**
+	 * Add a polygon
+	 * @param coordStyle - either xyxy (coordinates grouped) or xxyy (split)
+	 */
 	addPoly(pts: number[], color: string, coordStyle: "xyxy" | "xxyy") {
 		let points: Point[] = [];
 		switch (coordStyle) {
@@ -228,6 +297,9 @@ class App {
 		this.gridPoly(points, color);
 	}
 
+	/**
+	 * Check array for NaNs
+	 */
 	isValid(arr: number[]): boolean {
 		// check for NaN
 		for (let x of arr)
@@ -248,6 +320,12 @@ class App {
 		return this.isValid(arr) && arr.length % 2 === 0;
 	}
 
+	// TODO: split function into one separate one (not in class) that
+	// takes in the shapes, and another one within the class that processes
+
+	/**
+	 * Update all the shapes, read them from the HTML list
+	 */
 	updateAll(): void {
 		this.clearGrid();
 		this.drawBasis();
@@ -316,7 +394,7 @@ shapeList.addEventListener('change', (event) => {
 	}
 });
 
-function triggerKeyEffects(key: string, target: HTMLElement) {
+let triggerKeyEffects = (key: string, target: HTMLElement) => {
 	switch (key) {
 		case 'a':
 			addNewShape();
@@ -347,7 +425,7 @@ window.addEventListener('keyup', (event) => {
 	keyIsDown[key] = false;
 });
 
-function addNewShape() {
+let addNewShape = () => {
 	// add new list element
 	let li = document.createElement('li');
 	// add area for text
