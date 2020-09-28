@@ -225,12 +225,12 @@ class App {
 	/**
 	 * Fill in a polygon onto the grid given an array of vertices
 	 */
-	gridPoly(points: Point[], color: string): void {
+	gridPoly(points: Point[], color: string, lineWidth: number = 5): void {
 		if (points.length === 0)
 			return;
 		this.ctx.fillStyle = hexToRGB(color, '0.5');
 		this.ctx.strokeStyle = color;
-		this.ctx.lineWidth = 5;
+		this.ctx.lineWidth = lineWidth;
 		this.ctx.moveTo(points[0].x, points[0].y);
 		this.ctx.beginPath();
 		for (let point of points) {
@@ -277,7 +277,7 @@ class App {
 	 * Add a polygon
 	 * @param coordStyle - either xyxy (coordinates grouped) or xxyy (split)
 	 */
-	addPoly(pts: number[], color: string, coordStyle: "xyxy" | "xxyy") {
+	addPoly(pts: number[], color: string, coordStyle: "xyxy" | "xxyy", thickness: number = 5) {
 		let points: Point[] = [];
 		switch (coordStyle) {
 			case "xyxy":
@@ -294,7 +294,7 @@ class App {
 			default:
 				break;
 		};
-		this.gridPoly(points, color);
+		this.gridPoly(points, color, thickness);
 	}
 
 	/**
@@ -318,6 +318,10 @@ class App {
 
 	isValidPoly(arr: number[]): boolean {
 		return this.isValid(arr) && arr.length % 2 === 0;
+	}
+
+	isValidPoint(arr: number[]): boolean {
+		return this.isValid(arr) && arr.length == 2;
 	}
 
 	// TODO: split function into one separate one (not in class) that
@@ -365,6 +369,11 @@ class App {
 							this.addPoly(numbers, color, 'xxyy');
 						}
 						break;
+					case 'point':
+						if (this.isValidPoint(numbers)) {
+							this.addPoly(numbers, color, 'xxyy', 20);
+						}
+						break;
 					default:
 						break;
 				}
@@ -377,7 +386,7 @@ let app = new App();
 
 const addShapeButton = document.getElementById('add');
 const shapeList = document.getElementById('shapes') as HTMLUListElement;
-const shapes = ['rectangle', 'circle', 'poly xyxy', 'poly xxyy'];
+const shapes = ['rectangle', 'circle', 'poly xyxy', 'poly xxyy', 'point'];
 const keyIsDown = new Map<string, boolean>();
 
 shapeList.addEventListener('input', (event) => {
