@@ -1,5 +1,3 @@
-/* import {hexToRGB} from 'util' */
-
 class Point {
 	constructor(public x: number, public y: number) {}
 }
@@ -496,5 +494,3 @@ rangeInput.addEventListener('input', () => {
 			app.changeStepRange(p);
 	}
 });
-
-// vim: set fdm=syntax fdl=10: (fold subsections)
