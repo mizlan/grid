@@ -1,17 +1,17 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"watch": false,
-		"lib": ["dom", "es2017"],
-        "noUnusedLocals": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true
-	},
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        ".git",
-        "node_modules"
-    ]
+  "compilerOptions": {
+    "target": "ESNext",
+    "watch": false,
+    "lib": ["dom", "es2017"],
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    ".git",
+    "node_modules"
+  ]
 }
