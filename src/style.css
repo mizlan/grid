@@ -6,6 +6,13 @@ input, select, textarea, option, button {
 	font-family: 'Roboto Mono', monospace;
 	font-size: 30px;
 }
+.footer {
+	font-family: 'Roboto Mono', monospace;
+	font-size: 18px;
+  color: #a6b1bf;
+  position: fixed;
+  bottom: 3vh;
+}
 canvas {
 	background-color: #f7f7f7;
 	width: 100%;
